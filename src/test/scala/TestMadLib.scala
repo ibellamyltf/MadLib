@@ -13,9 +13,14 @@ class TestMadLib extends FlatSpec with Matchers {
     val docs = for (href <- urls) yield MadLib.findElements(baseURL+href, "#postingbody")
     val cleaned = MadLib.cleanElems(docs)
 
-    println(cleaned(0))
-    println(MadLib.sentences)
-    println(MadLib.tags(0).render)
+    // println(cleaned(0))
+     println(MadLib.sentences)
+    println(MadLib.tags)
+    for (i <- MadLib.tags) {
+      println(i)
+    }
+    println(MadLib.testValue)
+
 
   }
 }

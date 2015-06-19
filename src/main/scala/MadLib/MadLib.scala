@@ -12,6 +12,7 @@ import scala.collection.JavaConversions._
 import scala.language.postfixOps
 // import java.net.URL
 //
+import java.util.Random
 import epic.preprocess._
 import epic.models.PosTagSelector
 
@@ -19,14 +20,7 @@ import epic.models.PosTagSelector
 
 object MadLib {
 
-  /*
-  Base functions for eventually multiple threads
-  in order to experiment with Futures
-   */
-
   val baseURL = "http://denver.craigslist.org/"
-
-  // make this asynchronous!!!
 
   def findElements(url: String, selector: String): Elements = {
     val doc = Jsoup.connect(url).get()
@@ -56,7 +50,7 @@ object MadLib {
   val cleaned = cleanElems(docs)
 
   /*
-  Text processing guidelines:
+  Text processing guideline
   Each text blob has 300 or more characters; that's enough to make a MadLib!
 
   Testing: just make one that gets the parts of speech and case matches it back in
@@ -65,18 +59,20 @@ object MadLib {
 
   // much like the tests, please check those out.
 
+  val rand = new Random
+  val getRand: Int = rand.nextInt((cleaned.length - 0) + 1) + 1
+
   val sentenceSplitter = MLSentenceSegmenter.bundled().get
   val tokenizer = new epic.preprocess.TreebankTokenizer()
-  val sentences: IndexedSeq[IndexedSeq[String]] = sentenceSplitter(cleaned(0)).map(tokenizer).toIndexedSeq
+  val sentences: IndexedSeq[IndexedSeq[String]] = sentenceSplitter(cleaned(getRand)).map(tokenizer).toIndexedSeq
   val tagger = PosTagSelector.loadTagger("en").get
-  val tags = for {
+  val tags: IndexedSeq[epic.sequences.TaggedSequence[epic.trees.AnnotatedLabel, String]] = for {
     sentence <- sentences
   } yield tagger.bestSequence(sentence)
-
-  def parseText(text: IndexedSeq[String]) ={
-
-
+  def zipText(text: IndexedSeq[epic.sequences.TaggedSequence[epic.trees.AnnotatedLabel, String]]): IndexedSeq[IndexedSeq[(epic.trees.AnnotatedLabel, String)]] ={
+    for { t <- text } yield t.label zip t.features
   }
+  val testValue = zipText(tags)
 
   // will have to do this for each sentence!
   //val sentences: IndexedSeq[IndexedSeq[String]] = sentenceSplitter(text).map(tokenizer).toIndexedSeq
