@@ -20,7 +20,8 @@ class TestMadLib extends FlatSpec with Matchers {
       println(i)
     }
     println(MadLib.testValue)
-
+    val test = MadLib.normalizeToString(MadLib.testValue)
+    MadLib.spitOutput(test, "NN")
 
   }
 }

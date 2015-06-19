@@ -74,12 +74,29 @@ object MadLib {
   }
   val testValue = zipText(tags)
 
+  def normalizeToString(zipped:IndexedSeq[IndexedSeq[(epic.trees.AnnotatedLabel, String)]]): IndexedSeq[(String, String)] = {
+    zipped flatMap(sentence => sentence) map(x => x) map(x => (x._1.toString, x._2))
+  }
+
+  def spitOutput(normalized: IndexedSeq[(String, String)], omission: String ) = {
+    for (out <- normalized) {
+      if (out._1 == omission) println("__" + omission + "__") else println(out._2)
+    }
+
+  }
   // will have to do this for each sentence!
   //val sentences: IndexedSeq[IndexedSeq[String]] = sentenceSplitter(text).map(tokenizer).toIndexedSeq
 
 
 
 
-
+  /*
+  (zipped).foreach {
+    case sentence => for {item <- sentence
+                          item.
+    } {}
+  }
+  if (word._1 == "NN") word._2 = "____"
+  */
 
 }
